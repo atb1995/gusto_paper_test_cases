@@ -2,14 +2,14 @@
 # Submit weak scaling jobs: C8/2, C16/8, C32/32, C64/128, C128/512
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SLURM_SCRIPT="${SCRIPT_DIR}/weak_scaling_underpop.slurm"
+SLURM_SCRIPT="${SCRIPT_DIR}/weak_scaling_paper.slurm"
 
 # ncells : ntasks_per_node : nodes
 declare -A WEAK_CONFIG
-# WEAK_CONFIG[24]="36:1"
-# WEAK_CONFIG[48]="36:4"
+WEAK_CONFIG[24]="36:1"
+WEAK_CONFIG[48]="36:4"
 WEAK_CONFIG[96]="36:16"
-# WEAK_CONFIG[192]="36:64"
+WEAK_CONFIG[192]="36:64"
 #WEAK_CONFIG[384]="144:64"
 
 # Per-resolution time step and run length.

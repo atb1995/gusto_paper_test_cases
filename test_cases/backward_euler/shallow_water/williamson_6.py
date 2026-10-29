@@ -86,7 +86,7 @@ def williamson_6(
         DGUpwind(eqns, "D")
     ]
 
-    # Time stepper
+    # Monolithic solver settings
     nonlinear_solver_parameters = {
     "snes_converged_reason": None,
     "snes_lag_preconditioner_persists":None,
@@ -123,6 +123,8 @@ def williamson_6(
             }
         },
     },}
+
+    # Backward Euler timestepper
     scheme = BackwardEuler(domain, solver_parameters=nonlinear_solver_parameters)
     stepper = Timestepper(eqns, scheme, io, transport_methods )
 

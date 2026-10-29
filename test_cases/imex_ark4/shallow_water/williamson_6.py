@@ -84,54 +84,15 @@ def williamson_6(
     io = IO(domain, output, diagnostic_fields=diagnostic_fields)
 
     # Transport schemes
+
+    # Make sure divergence term is split
     eqns = split_continuity_form(eqns)
     transport_methods = [
         DGUpwind(eqns, "u"),
         DGUpwind(eqns, "D")
     ]
-    subcycling_opts = SubcyclingOptions(subcycle_by_courant=0.1)
-    # implicit_terms = [divergence, pressure_gradient, gravity]
-    # explicit_terms = [transport, coriolis]
-    # for term in implicit_terms:
-    #     eqns.label_terms(lambda t: t.has_label(term), implicit)
-    # for term in explicit_terms:
-    #     eqns.label_terms(lambda t: t.has_label(term) and not t.has_label(implicit), explicit)
-    nonlinear_solver_parameters = {
-    "snes_converged_reason": None,
-    "snes_lag_preconditioner_persists":None,
-    "snes_lag_preconditioner":-2,
-    "snes_lag_jacobian": -2,
-    "snes_lag_jacobian_persists": None,
-    "snes_ksp_ew": None,
-    "snes_ksp_ew_version": 2,
-    "snes_ksp_ew_rtol0": 1e-2,
-    "snes_ksp_ew_threshold": 5e-5,
-    "mat_type": "matfree",
-    "pmat_type":"aij",
-    "ksp_type": "gmres",
-    "ksp_gmres_restart": 100,
-    "ksp_converged_reason": None,
-    "ksp_atol": 1e-6,
-    "ksp_rtol": 1e-6,
-    "snes_atol": 1e-5,
-    "snes_rtol": 1e-5,
-    "ksp_max_it": 400,
-    "pc_type": "python",
-    "pc_python_type": "firedrake.AssembledPC","assembled": {
-        "pc_type": "python",
-        "pc_python_type": "firedrake.ASMStarPC",
-        "pc_star": {
-            "construct_dim": 0,
-            "sub_sub": {
-                "pc_type": "ilu",
-                "pc_factor_levels": 1,
-                "pc_factor_mat_ordering_type": "rcm",
-                "pc_factor_reuse_ordering": None,
-                "pc_factor_reuse_fill": None,
-                "pc_factor_fill": 1.0
-            }
-        },
-    },}
+
+    # Hybridised solver settings
     settings = {
             'snes_type': 'newtonls',
             'snes_max_it': 50,
@@ -157,8 +118,12 @@ def williamson_6(
                     }
                 }
         }
+    
+    # Transport terms explicit, all other terms implicit
     eqns.label_terms(lambda t: t.has_label(transport), explicit)
     eqns.label_terms(lambda t:  not t.has_label(time_derivative) and not t.has_label(explicit), implicit)
+    
+    # IMEX-ARK4 butcher tables
     butcher_imp=np.array(
         [
             [0, 0, 0, 0, 0, 0],
@@ -212,6 +177,8 @@ def williamson_6(
         ],
         dtype=float,
     )
+
+    # IMEX-ARK4 timestepper
     scheme = IMEXRungeKutta(domain, butcher_imp=butcher_imp, butcher_exp=butcher_exp, nonlinear_solver_parameters=settings)
     stepper = Timestepper(eqns, scheme, io, transport_methods )
 

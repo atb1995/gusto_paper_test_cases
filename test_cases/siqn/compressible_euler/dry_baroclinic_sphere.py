@@ -56,13 +56,14 @@ def create_layer_height(htop, nlayers):
         layer_height.append(depth)
 
     return layer_height
+
 dry_baroclinic_sphere_defaults = {
     'ncell_per_edge': 16,
     'nlayers': 15,
     'dt': 450.0,               # 15 minutes
     'tmax': 15.*24.*60.*60.,   # 15 days
     'dumpfreq': 100,            # Corresponds to every 12 hours with default opts
-    'dirname': 'dry_baroclinic_sphere_ars443',
+    'dirname': 'dry_baroclinic_sphere_siqn',
     'results_csv': None,
     'io_on':True
 }

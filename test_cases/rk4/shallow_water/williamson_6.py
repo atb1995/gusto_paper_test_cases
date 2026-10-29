@@ -84,23 +84,12 @@ def williamson_6(
     io = IO(domain, output, diagnostic_fields=diagnostic_fields)
 
     # Transport schemes
-    # eqns = split_continuity_form(eqns)
     transport_methods = [
         DGUpwind(eqns, "u"),
         DGUpwind(eqns, "D")
     ]
-    subcycling_opts = SubcyclingOptions(subcycle_by_courant=0.1)
-    # implicit_terms = [divergence, pressure_gradient, gravity, coriolis]
-    # explicit_terms = [transport, corilis]
-    # for term in implicit_terms:
-    #     eqns.label_terms(lambda t: t.has_label(term), implicit)
-    # for term in explicit_terms:
-    #     eqns.label_terms(lambda t: t.has_label(term) and not t.has_label(implicit), explicit)
-    # eqns.label_terms(lambda t: t.has_label(transport), explicit)
-    # eqns.label_terms(lambda t:  not t.has_label(time_derivative) and not t.has_label(explicit), implicit)
-    # # nl_solver_parameters = {,
-    # # Time stepper
-    # scheme = IMEX_Euler3(domain)
+
+    # RK4 Timestepper
     scheme = RK4(domain)
     stepper = Timestepper(eqns, scheme, io, transport_methods )
 

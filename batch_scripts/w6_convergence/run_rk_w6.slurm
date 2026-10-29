@@ -16,18 +16,14 @@ set -euo pipefail
 module purge
 module load PrgEnv-gnu
 module load cray-python
-module swap cray-mpich/9.1.0 cray-mpich/8.1.30
-export GUSTO_DIR=~/gusto_apr26
-export GUSTO_ENV=/home/u35z/alexbrown.u35z/gusto_apr26/venv-gusto
-export PETSC_DIR=~/gusto_apr26/petsc PETSC_ARCH=arch-firedrake-default
+export GUSTO_ENV=/home/u35z/alexbrown.u35z/gusto_oct26/venv-gusto
+export PYTHONPATH=/home/u35z/alexbrown.u35z/gusto_oct26/dc_improvements:$PYTHONPATH
+export PETSC_DIR=/home/u35z/alexbrown.u35z/gusto_oct26/petsc PETSC_ARCH=arch-firedrake-default
 export LIBSUPERMESH_DIR=$GUSTO_ENV/lib/python3.11/site-packages/libsupermesh
-
-export LD_LIBRARY_PATH=$PETSC_DIR/$PETSC_ARCH/lib:$LIBSUPERMESH_DIR/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/opt/cray/libfabric/1.22.0/lib64:$PETSC_DIR/$PETSC_ARCH/lib:$LIBSUPERMESH_DIR/lib:${LD_LIBRARY_PATH:-}
+export PYOP2_CACHE_DIR=/projects/u35z/gusto_paper_test_cases/pyop2_cache
+export XDG_CACHE_HOME=/projects/u35z/gusto_paper_test_cases/cache
 source $GUSTO_ENV/bin/activate
-
-
-export PYTHONPATH=/home/u35z/alexbrown.u35z/gusto_apr26/dc_improvements:$PYTHONPATH
-
 export OMP_NUM_THREADS=1
 
 # -----------------------------------------
